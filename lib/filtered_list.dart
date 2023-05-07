@@ -26,17 +26,19 @@ class _FilteredListState extends State<FilteredList> {
 
   List<User> get _filteredUsers {
     List<User> filteredUsers = users;
-    if (_selectedReaction != null) {
-      filteredUsers = filteredUsers
-          .where((user) => user.reaction == _selectedReaction)
-          .toList();
-    }
     if (_hasBioFilter) {
-      filteredUsers =
-          filteredUsers.where((user) => user.bio.isNotEmpty).toList();
+      filteredUsers = filteredUsers.where((user) => user.bio.isNotEmpty).toList();
+    }
+    if (_searchQuery.isNotEmpty) {
+      filteredUsers = filteredUsers.where((user) {
+        final nameLower = user.name.toLowerCase();
+        final searchLower = _searchQuery.toLowerCase();
+        return nameLower.contains(searchLower);
+      }).toList();
     }
     return filteredUsers;
   }
+
 
   String _searchQuery = '';
 
@@ -78,6 +80,7 @@ class _FilteredListState extends State<FilteredList> {
               },
               decoration: InputDecoration(
                 hintText: 'Search...',
+                prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
               ),
             ),
