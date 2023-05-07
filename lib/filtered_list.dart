@@ -14,20 +14,11 @@ class FilteredList extends StatefulWidget {
 class _FilteredListState extends State<FilteredList> {
   bool onlyShowPeopleWithBio = false;
   bool _hasBioFilter = false;
-  Reaction? _selectedReaction;
 
-  String takeInitials(String data) {
-    RegExp initialsRegex = RegExp(r"(?<=^|\s)[a-zA-Z]");
-    return initialsRegex
-        .allMatches(data)
-        .map((match) => match.group(0)!.toUpperCase())
-        .join('');
-  }
-
-  List<User> get _filteredUsers {
+  List<User> get filteredUsers {
     List<User> filteredUsers = users;
     if (_hasBioFilter) {
-      filteredUsers = filteredUsers.where((user) => user.bio.isNotEmpty).toList();
+      filteredUsers = filteredUsers.where((user) => user.bio != null).toList();
     }
     if (_searchQuery.isNotEmpty) {
       filteredUsers = filteredUsers.where((user) {
@@ -39,38 +30,14 @@ class _FilteredListState extends State<FilteredList> {
     return filteredUsers;
   }
 
-
   String _searchQuery = '';
-
-  Expanded _buildUserList(Reaction reaction) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: _filteredUsers.length,
-        itemBuilder: (context, index) {
-          final user = _filteredUsers[index];
-          if (user.reaction == reaction) {
-            return ListTile(
-              leading: CircleAvatar(
-                child: Text(takeInitials(user.name)),
-              ),
-              title: Text(user.name),
-              subtitle: user.bio != null ? Text(user.bio!) : Text(""),
-            );
-          } else {
-            return SizedBox.shrink();
-          }
-        },
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: ListView(
           children: [
             TextField(
               onChanged: (value) {
@@ -111,7 +78,7 @@ class _FilteredListState extends State<FilteredList> {
                 ],
               ),
             ),
-            _buildUserList(Reaction.thumbsUp),
+            buildUserList(Reaction.thumbsUp),
             SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -123,10 +90,37 @@ class _FilteredListState extends State<FilteredList> {
                 ],
               ),
             ),
-            _buildUserList(Reaction.thumbsDown),
+            buildUserList(Reaction.thumbsDown),
           ],
         ),
       ),
     );
+  }
+
+  Widget buildUserList(Reaction reaction) {
+    return Column(
+        children: filteredUsers.map(
+      (user) {
+        if (user.reaction == reaction) {
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundImage: NetworkImage('https://api.multiavatar.com/${user.name.replaceAll(' ', '%20')}.png'),
+            ),
+            title: Text(user.name),
+            subtitle: user.bio != null ? Text(user.bio!) : null,
+          );
+        } else {
+          return SizedBox.shrink();
+        }
+      },
+    ).toList());
+  }
+
+  String takeInitials(String data) {
+    RegExp initialsRegex = RegExp(r"(?<=^|\s)[a-zA-Z]");
+    return initialsRegex
+        .allMatches(data)
+        .map((match) => match.group(0)!.toUpperCase())
+        .join('');
   }
 }
