@@ -1,16 +1,10 @@
-# filtered_list
+# Filtered list of users
 
-A new Flutter project.
+This is a flutter project which contains a filtered list of users.
 
-## Getting Started
+## Functionalities
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- each user has an image profile, a name and a bio
+- search user by name
+- filter user by bio
+- display list based on their reaction
